@@ -1,31 +1,38 @@
-name: Build Expo Web
+name: Deploy Expo Web to GitHub Pages
 
 on:
   push:
     branches:
       - main
 
+permissions:
+  pages: write
+  id-token: write
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Install dependencies
-        run: npm install
+      - run: npm install
+      - run: npx expo export:web
 
-      - name: Build Expo Web
-        run: npx expo export:web
-
-      - name: Upload build
-        uses: actions/upload-artifact@v4
+      - name: Upload to Pages
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: expo-web-build
           path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy
+        uses: actions/deploy-pages@v4
