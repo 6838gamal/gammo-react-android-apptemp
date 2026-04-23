@@ -24,14 +24,20 @@ jobs:
         with:
           node-version: 18
 
+      - name: Clear cache
+        run: npm cache clean --force
+
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
-      - name: Install Expo Web support
-        run: npx expo install react-dom react-native-web
+      - name: Install Expo CLI
+        run: npm install -g expo-cli
 
-      - name: Build Expo Web
-        run: npx expo export:web
+      - name: Install Web support
+        run: expo install react-dom react-native-web
+
+      - name: Build Web
+        run: expo export:web
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
